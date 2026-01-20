@@ -1,4 +1,4 @@
-# 🚚 artmix Profit Designer for Transport
+# 🚚 Art mix Profit Designer for Transport
 ### 「現場の劣化」を数字で止め、運輸業の「誇りと利益」を再設計する。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -29,6 +29,14 @@ $$L_w = H_w \times 2,500 \times 260 \times N$$
 現場の規律や整備状況のわずかな差が、年間数百万のコスト増を招きます。
 $$G_f = \left( \frac{M}{E_{curr}} - \frac{M}{E_{target}} \right) \times 160 \times N$$
 *(年間走行距離 $M$, 現在燃費 $E_{curr}$, 目標燃費 $E_{target}$, 車両台数 $N$)*
+
+### 3. 品質劣化（事故・トラブル）の損失 ($L_q$)
+QA（品質保証）の欠如が招く、保険料増額や管理工数の流出を算出。
+「事故は運が悪かった」ではなく「仕組みで防げるコスト」と定義します。
+
+### 4. 採用・定着の損失 ($L_r$)
+離職に伴う採用費、教育費、および熟練度低下による機会損失を可視化。
+人財を「消耗品」から「資産」へと再設計するための指標です。
 
 ---
 
