@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運輸業・利益漏洩シミュレーター | artmix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 leading-relaxed">
+
+    <header class="gradient-bg text-white py-8 px-4 text-center shadow-lg">
+        <h1 class="text-2xl md:text-3xl font-bold mb-2">運輸業・利益漏洩シミュレーター</h1>
+        <p class="text-slate-300 text-sm md:text-base">14.5年の現場知見に基づく、利益再設計ツール</p>
+    </header>
+
+    <main class="max-w-2xl mx-auto p-4 md:p-8">
+        <section class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold mb-3 text-slate-800">御社の「隠れた損失」を可視化します</h2>
+            <p class="text-sm text-slate-600">スライダーを動かして、現状の数字を入力してください。現場に潜む「利益の漏れ」がリアルタイムで算出されます。</p>
+        </section>
+
+        <div class="space-y-8 bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-100">
+            
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-4">
+                    保有車両数: <span id="val-vehicles" class="text-blue-600 text-xl">45</span> 台
+                </label>
+                <input type="range" id="input-vehicles" min="10" max="100" value="45" step="1"
+                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-4">
+                    1日あたりの平均待機時間: <span id="val-wait" class="text-blue-600 text-xl">1.0</span> 時間/台
+                </label>
+                <input type="range" id="input-wait" min="0" max="5" value="1" step="0.5"
+                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-4">
+                    燃費の改善余地（バラツキ）: <span id="val-fuel" class="text-blue-600 text-xl">0.3</span> km/L
+                </label>
+                <input type="range" id="input-fuel" min="0" max="1" value="0.3" step="0.1"
+                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                <p class="text-xs text-slate-400 mt-2">※現状の燃費と「あるべき燃費」の差</p>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <div class="text-center py-6 bg-slate-50 rounded-xl border border-blue-50">
+                <p class="text-sm font-bold text-slate-500 mb-2 uppercase tracking-widest">推定年間利益損失額</p>
+                <div class="text-4xl md:text-5xl font-extrabold text-red-600 mb-4">
+                    ¥ <span id="total-loss">0</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-xs md:text-sm text-slate-600">
+                    <div class="p-3 bg-white rounded-lg shadow-sm">待機損失: <br><span id="wait-loss" class="font-bold">0</span></div>
+                    <div class="p-3 bg-white rounded-lg shadow-sm">燃費損失: <br><span id="fuel-loss" class="font-bold">0</span></div>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-8 bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center">
+            <h3 class="font-bold text-blue-900 mb-2">この「漏れ」を、私が再設計して止めます。</h3>
+            <p class="text-sm text-blue-800 mb-6 leading-relaxed">
+                独立前の特別枠として、月額15万円の伴走型サブスクリプションを<br class="hidden md:block">
+                <span class="font-bold text-red-600">3月末までのご契約限定・残り2社のみ</span>募集しています。
+            </p>
+            <a href="https://artmix.jp" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-all shadow-lg hover:shadow-xl active:scale-95">
+                小森隼也へ直接相談する
+            </a>
+        </section>
+    </main>
+
+    <footer class="mt-12 py-8 text-center text-slate-400 text-xs border-t border-slate-200">
+        &copy; 2026 artmix Inc. | Designed by Junya Komori
+    </footer>
+
+    <script>
+        const inputs = ['vehicles', 'wait', 'fuel'];
+        const elements = {};
+        inputs.forEach(id => {
+            elements[id] = document.getElementById(`input-${id}`);
+            elements[`val-${id}`] = document.getElementById(`val-${id}`);
+        });
+
+        const totalLossEl = document.getElementById('total-loss');
+        const waitLossEl = document.getElementById('wait-loss');
+        const fuelLossEl = document.getElementById('fuel-loss');
+
+        function calculate() {
+            const n = parseFloat(elements.vehicles.value);
+            const h = parseFloat(elements.wait.value);
+            const fGap = parseFloat(elements.fuel.value);
+
+            // 待機損失: 時間 * 2500円 * 260日 * 台数
+            const wLoss = h * 2500 * 260 * n;
+            
+            // 燃料損失: (1/3.5 - 1/3.85) * 160円 * 60,000km * 台数 (燃費改善0.35想定の簡略式)
+            // 1km/Lの改善で年間約12万円/台の節約(大型想定)に基づき係数を設定
+            const fLoss = fGap * 350000 * n; 
+
+            const total = wLoss + fLoss;
+
+            // UI更新
+            elements['val-vehicles'].innerText = n;
+            elements['val-wait'].innerText = h.toFixed(1);
+            elements['val-fuel'].innerText = fGap.toFixed(1);
+
+            totalLossEl.innerText = Math.floor(total).toLocaleString();
+            waitLossEl.innerText = '¥' + Math.floor(wLoss).toLocaleString();
+            fuelLossEl.innerText = '¥' + Math.floor(fLoss).toLocaleString();
+        }
+
+        inputs.forEach(id => {
+            elements[id].addEventListener('input', calculate);
+        });
+
+        // 初期計算
+        calculate();
+    </script>
+</body>
+</html>
