@@ -6,9 +6,11 @@
     <title>運輸業利益再設計シミュレーター | Art mix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Noto Sans JP', sans-serif; -webkit-tap-highlight-color: transparent; }
         .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        /* Custom Slider Styling */
         input[type="range"]::-webkit-slider-thumb {
             width: 24px; height: 24px; background: #2563eb; cursor: pointer; border-radius: 50%; border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); -webkit-appearance: none;
         }
@@ -25,118 +27,164 @@
 
     <main class="max-w-xl mx-auto px-4">
         
-        <div class="sticky top-4 z-10 mb-8 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-blue-100 text-center transform transition-all">
-            <p class="text-xs font-bold text-slate-500 mb-1 uppercase tracking-widest">年間想定利益損失額</p>
-            <div class="text-4xl md:text-5xl font-extrabold text-red-600 mb-2">
-                ¥ <span id="total-loss">0</span>
+        <div id="capture-target" class="bg-slate-50 p-2 rounded-3xl">
+            
+            <div class="sticky top-4 z-10 mb-6 bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-blue-100 text-center transform transition-all">
+                <p class="text-xs font-bold text-slate-500 mb-1 uppercase tracking-widest">年間想定利益損失額</p>
+                <div class="text-4xl md:text-5xl font-extrabold text-red-600 mb-2 leading-none py-2">
+                    ¥ <span id="total-loss">0</span>
+                </div>
+                <p class="text-[10px] text-slate-400">※現状の「現場の緩み」が招いている潜在的損失</p>
+
+                <div class="grid grid-cols-2 gap-3 mt-6">
+                    <button onclick="saveImage()" class="flex items-center justify-center bg-slate-800 text-white text-xs font-bold py-3 px-4 rounded-xl hover:bg-slate-700 transition active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        画像保存
+                    </button>
+                    <button onclick="shareLine()" class="flex items-center justify-center bg-[#06C755] text-white text-xs font-bold py-3 px-4 rounded-xl hover:opacity-90 transition active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 10.304c0-5.68-5.373-10.304-12-10.304S0 4.624 0 10.304c0 4.823 3.815 8.905 9.518 10.048-.351 1.216-1.163 3.097-1.584 3.779-.261.398.097.84.43.663 2.535-1.339 6.291-3.889 7.914-5.181 4.43-1.493 7.722-5.317 7.722-9.309z"/>
+                        </svg>
+                        LINEで送る
+                    </button>
+                </div>
             </div>
-            <p class="text-[10px] text-slate-400">※現状の「現場の緩み」が招いている潜在的損失</p>
+
+            <div class="space-y-8 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
+                <div class="group">
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">🚚</span> 保有車両数
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-vehicles">45</span><span class="text-xs text-slate-400 ml-1">台</span></span>
+                    </div>
+                    <input type="range" id="input-vehicles" min="10" max="100" value="45" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">🛣️</span> 年間走行距離/台
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-mileage">60,000</span><span class="text-xs text-slate-400 ml-1">km</span></span>
+                    </div>
+                    <input type="range" id="input-mileage" min="20000" max="150000" value="60000" step="10000" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">⏳</span> 平均待機時間
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-wait">1.0</span><span class="text-xs text-slate-400 ml-1">h/日</span></span>
+                    </div>
+                    <input type="range" id="input-wait" min="0" max="5" value="1.0" step="0.5" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">⛽</span> 燃費の改善余地
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-fuel">0.3</span><span class="text-xs text-slate-400 ml-1">km/L</span></span>
+                    </div>
+                    <input type="range" id="input-fuel" min="0" max="1.0" value="0.3" step="0.1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">⚠️</span> 年間事故・トラブル
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-accidents">3</span><span class="text-xs text-slate-400 ml-1">件</span></span>
+                    </div>
+                    <input type="range" id="input-accidents" min="0" max="20" value="3" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="font-bold text-slate-700 flex items-center text-sm">
+                            <span class="bg-slate-100 p-2 rounded-lg mr-2">👤</span> 年間離職人数
+                        </label>
+                        <span class="text-xl font-extrabold text-blue-600"><span id="val-turnover">2</span><span class="text-xs text-slate-400 ml-1">名</span></span>
+                    </div>
+                    <input type="range" id="input-turnover" min="0" max="30" value="2" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="mt-6 p-6 bg-slate-800 text-white rounded-3xl shadow-sm overflow-hidden text-[11px] leading-relaxed font-mono opacity-90">
+                <h4 class="text-xs font-bold text-blue-400 mb-3 uppercase tracking-widest flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    設計根拠・計算ロジック
+                </h4>
+                
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-bold text-slate-300 mb-1">⛽ 燃料損失</p>
+                        <p>軽油単価: 160円/L, 基準燃費: 3.5km/L</p>
+                        <p class="text-blue-300">式: ((走行距離/3.5) - (走行距離/(3.5+改善幅))) × 160 × 台数</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-300 mb-1">⏳ 待機損失</p>
+                        <p>時間単価: 2,500円 (人件費+車両固定費), 稼働: 260日</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-300 mb-1">⚠️ 品質損失 (事故)</p>
+                        <p class="text-blue-300">1件あたり 300,000円 で試算</p>
+                        <p>(修理費実費、保険料増額、対応工数等の総額)</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-300 mb-1">👤 人財損失 (離職)</p>
+                        <p class="text-blue-300">1名あたり 1,200,000円 で試算</p>
+                        <p>(採用広告費、教育担当工数、未熟練期間の機会損失)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">待機時間損失</p>
+                    <p id="wait-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm border-blue-200 bg-blue-50/30">
+                    <p class="text-[10px] font-bold text-blue-400 uppercase mb-1 text-center">燃料効率損失</p>
+                    <p id="fuel-loss" class="text-sm font-bold text-blue-600 text-center text-lg">¥0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">品質トラブル損失</p>
+                    <p id="q-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">離職・採用損失</p>
+                    <p id="r-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
+                </div>
+            </div>
         </div>
-
-        <div class="space-y-10 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-            <div class="group">
-                <div class="flex justify-between items-center mb-4">
-                    <label class="font-bold text-slate-700 flex items-center">
-                        <span class="bg-slate-100 p-2 rounded-lg mr-2">🚚</span> 保有車両数
-                    </label>
-                    <span class="text-2xl font-extrabold text-blue-600"><span id="val-vehicles">45</span><span class="text-sm text-slate-400 ml-1">台</span></span>
-                </div>
-                <input type="range" id="input-vehicles" min="10" max="100" value="45" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <label class="font-bold text-slate-700 flex items-center">
-                        <span class="bg-slate-100 p-2 rounded-lg mr-2">⏳</span> 平均待機時間
-                    </label>
-                    <span class="text-2xl font-extrabold text-blue-600"><span id="val-wait">1.0</span><span class="text-sm text-slate-400 ml-1">h/日</span></span>
-                </div>
-                <input type="range" id="input-wait" min="0" max="5" value="1.0" step="0.5" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-                <p class="text-[10px] text-slate-400 mt-2">※1時間あたり2,500円（人件費＋車両固定費）で試算</p>
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <label class="font-bold text-slate-700 flex items-center">
-                        <span class="bg-slate-100 p-2 rounded-lg mr-2">⛽</span> 燃費の改善余地
-                    </label>
-                    <span class="text-2xl font-extrabold text-blue-600"><span id="val-fuel">0.3</span><span class="text-sm text-slate-400 ml-1">km/L</span></span>
-                </div>
-                <input type="range" id="input-fuel" min="0" max="1.0" value="0.3" step="0.1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-                <p class="text-[10px] text-slate-400 mt-2">※大型トラックの標準燃費3.5km/Lとの比較</p>
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <label class="font-bold text-slate-700 flex items-center">
-                        <span class="bg-slate-100 p-2 rounded-lg mr-2">⚠️</span> 年間事故・トラブル
-                    </label>
-                    <span class="text-2xl font-extrabold text-blue-600"><span id="val-accidents">3</span><span class="text-sm text-slate-400 ml-1">件</span></span>
-                </div>
-                <input type="range" id="input-accidents" min="0" max="20" value="3" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-4">
-                    <label class="font-bold text-slate-700 flex items-center">
-                        <span class="bg-slate-100 p-2 rounded-lg mr-2">👤</span> 年間離職人数
-                    </label>
-                    <span class="text-2xl font-extrabold text-blue-600"><span id="val-turnover">2</span><span class="text-sm text-slate-400 ml-1">名</span></span>
-                </div>
-                <input type="range" id="input-turnover" min="0" max="30" value="2" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-            </div>
-        </div>
-
-        <div class="mt-8 p-6 bg-slate-800 text-white rounded-3xl shadow-sm overflow-hidden">
-            <h4 class="text-xs font-bold text-blue-400 mb-4 uppercase tracking-widest">⛽ 燃料損失の計算根拠</h4>
-            <div class="text-[11px] space-y-2 leading-relaxed opacity-90 font-mono">
-                <p>年間走行距離：60,000km / 台</p>
-                <p>軽油単価：160円 / L</p>
-                <p>基準燃費：3.5km/L</p>
-                <p class="border-t border-slate-700 pt-2 text-blue-300">
-                    計算式：((60,000 / 3.5) - (60,000 / (3.5 + 改善幅))) × 160 × 台数
-                </p>
-            </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 gap-3">
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">待機時間損失</p>
-                <p id="wait-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
-            </div>
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm border-blue-200 bg-blue-50/30">
-                <p class="text-[10px] font-bold text-blue-400 uppercase mb-1 text-center">燃料効率損失</p>
-                <p id="fuel-loss" class="text-sm font-bold text-blue-600 text-center text-lg">¥0</p>
-            </div>
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">品質トラブル損失</p>
-                <p id="q-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
-            </div>
-            <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">離職・採用損失</p>
-                <p id="r-loss" class="text-sm font-bold text-slate-700 text-center">¥0</p>
-            </div>
-        </div>
-
-        <section class="mt-12 bg-blue-600 p-8 rounded-[2.5rem] text-center text-white shadow-2xl">
+        <section class="mt-12 bg-blue-600 p-8 rounded-[2.5rem] text-center text-white shadow-2xl shadow-blue-200/50">
             <h3 class="text-xl font-bold mb-4">この「漏れ」を、私が再設計して止めます。</h3>
-            <p class="text-sm text-blue-100 mb-8">
-                3月末までのご契約限定・残り2社のみ募集
+            <p class="text-sm text-blue-100 mb-8 leading-relaxed">
+                独立前の特別枠として、月額15万円の伴走型サブスクリプションを<br class="hidden md:block">
+                <span class="text-yellow-300 font-bold">【3月末までのご契約限定・残り2社】</span>募集しています。
             </p>
-            <a href="https://artmix.jp" class="block bg-white text-blue-600 font-bold py-4 px-8 rounded-2xl active:scale-95 shadow-lg">
+            <a href="https://artmix.jp" class="block bg-white text-blue-600 font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:scale-95">
                 小森 隼也に相談する
             </a>
         </section>
 
     </main>
 
-    <footer class="mt-16 text-center text-slate-400 text-[10px]">
-        &copy; 2026 artmix Inc. | Designed by Junya Komori
+    <footer class="mt-16 pb-8 text-center text-slate-400 text-[10px]">
+        &copy; 2026 artmix Inc. | Designed by Junya Komori<br>
+        「未来を動かすハンドルと、どこへでも行ける地図を。」
     </footer>
 
     <script>
-        const inputIds = ['vehicles', 'wait', 'fuel', 'accidents', 'turnover'];
+        // IDリストに mileage を追加
+        const inputIds = ['vehicles', 'mileage', 'wait', 'fuel', 'accidents', 'turnover'];
         const elements = {};
+        
         inputIds.forEach(id => {
             elements[id] = document.getElementById(`input-${id}`);
             elements[`val-${id}`] = document.getElementById(`val-${id}`);
@@ -150,6 +198,7 @@
 
         function calculate() {
             const n = parseFloat(elements.vehicles.value);
+            const m = parseFloat(elements.mileage.value); // 年間走行距離を取得
             const h = parseFloat(elements.wait.value);
             const fGap = parseFloat(elements.fuel.value);
             const acc = parseFloat(elements.accidents.value);
@@ -158,11 +207,10 @@
             // 1. 待機損失
             const wLoss = h * 2500 * 260 * n;
             
-            // 2. 燃料損失 (精密計算)
-            const standardMileage = 60000;
+            // 2. 燃料損失 (走行距離mを使用)
             const fuelPrice = 160;
             const baseEfficiency = 3.5;
-            const fLoss = ((standardMileage / baseEfficiency) - (standardMileage / (baseEfficiency + fGap))) * fuelPrice * n;
+            const fLoss = ((m / baseEfficiency) - (m / (baseEfficiency + fGap))) * fuelPrice * n;
 
             // 3. 品質損失
             const qLoss = acc * 300000;
@@ -172,9 +220,16 @@
 
             const total = wLoss + fLoss + qLoss + rLoss;
 
+            // UI更新
             inputIds.forEach(id => {
-                if(id === 'wait' || id === 'fuel') elements[`val-${id}`].innerText = parseFloat(elements[id].value).toFixed(1);
-                else elements[`val-${id}`].innerText = elements[id].value;
+                if(id === 'wait' || id === 'fuel') {
+                    elements[`val-${id}`].innerText = parseFloat(elements[id].value).toFixed(1);
+                } else if (id === 'mileage') {
+                    // 走行距離はカンマ区切りで見やすく
+                    elements[`val-${id}`].innerText = parseFloat(elements[id].value).toLocaleString();
+                } else {
+                    elements[`val-${id}`].innerText = elements[id].value;
+                }
             });
 
             totalLossEl.innerText = Math.floor(total).toLocaleString();
@@ -185,7 +240,53 @@
         }
 
         inputIds.forEach(id => elements[id].addEventListener('input', calculate));
-        calculate();
+        calculate(); // 初回実行
+
+        // --- 新機能：画像保存 ---
+        function saveImage() {
+            const target = document.getElementById('capture-target');
+            // 一時的に背景を白にしてキャプチャリングを綺麗にする
+            const originalBg = target.style.backgroundColor;
+            target.style.backgroundColor = "#ffffff";
+
+            html2canvas(target, { scale: 2 }).then(canvas => {
+                // 元に戻す
+                target.style.backgroundColor = originalBg;
+
+                // 画像としてダウンロード
+                const link = document.createElement('a');
+                link.download = '運輸業利益診断結果.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        // --- 新機能：LINEで送る ---
+        function shareLine() {
+            const total = totalLossEl.innerText;
+            const v = elements.vehicles.value;
+            const w = elements['val-wait'].innerText;
+            const f = elements['val-fuel'].innerText;
+
+            // LINEに送るテキストメッセージを作成
+            const message = 
+`【運輸業利益診断結果】
+御社の年間想定損失額は
+💰 約 ${total} 円 です。
+
+[診断条件]
+車両: ${v}台
+待機: ${w}h/日
+燃費改善余地: ${f}km/L
+
+この損失は「設計」で止められます。
+詳細な内訳と改善策はこちら↓
+(ここにGitHub PagesのURLを貼る)
+#artmix #小森隼也`;
+
+            // LINEアプリを起動
+            window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
+        }
     </script>
 </body>
 </html>
