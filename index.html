@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>運輸業利益再設計シミュレーター | Art mix</title>
+    <title>運輸業利益再設計シミュレーター | artmix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -18,9 +18,10 @@
 <body class="bg-slate-100 text-slate-900 pb-20">
 
     <header class="gradient-bg text-white py-12 px-6 text-center shadow-2xl mb-8">
-        <h1 class="text-3xl font-bold mb-3 tracking-tight">運輸業・利益再設計シミュレーター</h1>
+        <h1 class="text-2xl md:text-3xl font-bold mb-3 tracking-tight">運輸業・利益再設計シミュレーター</h1>
         <p class="text-slate-400 text-sm max-w-lg mx-auto leading-relaxed">
-            市場価格を捉え、保守設計で経営を守る。現場の「劣化」を数字に変える診断ツール。
+            Chief Business Strategist / Business Architect<br>
+            小森 隼也による、経営構造の再構築ツール
         </p>
     </header>
 
@@ -35,10 +36,10 @@
                 </div>
                 
                 <div class="flex gap-3 mt-4">
-                    <button onclick="saveAsImage()" class="flex-1 bg-slate-800 text-white text-[10px] font-bold py-4 px-2 rounded-2xl hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center shadow-lg">
+                    <button onclick="saveAsImage()" class="flex-1 bg-slate-800 text-white text-[11px] font-bold py-4 px-2 rounded-2xl hover:bg-slate-700 active:scale-95 transition-all flex items-center justify-center shadow-lg">
                         画像として保存
                     </button>
-                    <button onclick="shareOnLine()" class="flex-1 bg-[#06C755] text-white text-[10px] font-bold py-4 px-2 rounded-2xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center shadow-lg">
+                    <button onclick="shareOnLine()" class="flex-1 bg-[#06C755] text-white text-[11px] font-bold py-4 px-2 rounded-2xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center shadow-lg">
                         LINEで送る
                     </button>
                 </div>
@@ -48,7 +49,7 @@
                 
                 <div>
                     <div class="flex justify-between items-end mb-5">
-                        <label class="font-bold text-slate-700 flex flex-col">
+                        <label class="font-bold text-slate-700 flex flex-col text-sm">
                             <span>軽油単価（計算基準）</span>
                             <span class="text-[10px] text-slate-400 font-normal">市場平均：約143円 / 保守設計：160円</span>
                         </label>
@@ -59,7 +60,7 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-5">
-                        <label class="font-bold text-slate-700 flex items-center">保有車両数</label>
+                        <label class="font-bold text-slate-700 text-sm">保有車両数</label>
                         <span class="text-2xl font-black text-blue-600"><span id="val-vehicles">45</span><small class="text-xs text-slate-400 ml-1">台</small></span>
                     </div>
                     <input type="range" id="input-vehicles" min="10" max="100" value="45" step="1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
@@ -67,7 +68,7 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-5">
-                        <label class="font-bold text-slate-700 flex items-center">年間走行距離/台</label>
+                        <label class="font-bold text-slate-700 text-sm">年間走行距離/台</label>
                         <span class="text-2xl font-black text-blue-600"><span id="val-mileage">60,000</span><small class="text-xs text-slate-400 ml-1">km</small></span>
                     </div>
                     <input type="range" id="input-mileage" min="10000" max="150000" value="60000" step="5000" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
@@ -75,7 +76,7 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-5">
-                        <label class="font-bold text-slate-700 flex items-center">平均待機時間</label>
+                        <label class="font-bold text-slate-700 text-sm">平均待機時間</label>
                         <span class="text-2xl font-black text-blue-600"><span id="val-wait">1.0</span><small class="text-xs text-slate-400 ml-1">h/日</small></span>
                     </div>
                     <input type="range" id="input-wait" min="0" max="5.0" value="1.0" step="0.5" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
@@ -83,22 +84,22 @@
 
                 <div>
                     <div class="flex justify-between items-center mb-5">
-                        <label class="font-bold text-slate-700 flex items-center text-blue-600">燃費改善の余地</label>
+                        <label class="font-bold text-slate-700 text-sm text-blue-600">燃費改善の余地</label>
                         <span class="text-2xl font-black text-blue-600"><span id="val-fuel">0.3</span><small class="text-xs text-slate-400 ml-1">km/L</small></span>
                     </div>
                     <input type="range" id="input-fuel" min="0" max="1.5" value="0.3" step="0.1" class="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-4 border-t border-slate-50 pt-8">
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase">事故/トラブル</label>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest text-center">事故/トラブル</label>
                         <input type="range" id="input-accidents" min="0" max="30" value="3" step="1" class="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-                        <div class="text-right mt-1 text-slate-600 font-bold"><span id="val-accidents">3</span><small class="text-[10px] ml-1">件</small></div>
+                        <div class="text-center mt-2 text-slate-600 font-bold"><span id="val-accidents">3</span><small class="text-[10px] ml-1">件</small></div>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase">年間離職人数</label>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-widest text-center">年間離職人数</label>
                         <input type="range" id="input-turnover" min="0" max="20" value="2" step="1" class="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer">
-                        <div class="text-right mt-1 text-slate-600 font-bold"><span id="val-turnover">2</span><small class="text-[10px] ml-1">名</small></div>
+                        <div class="text-center mt-2 text-slate-600 font-bold"><span id="val-turnover">2</span><small class="text-[10px] ml-1">名</small></div>
                     </div>
                 </div>
 
@@ -107,32 +108,44 @@
             <div class="mt-8 bg-slate-800 text-slate-300 p-8 rounded-[2rem] shadow-inner text-[11px] leading-relaxed">
                 <h4 class="text-xs font-bold text-blue-400 mb-5 uppercase tracking-widest flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    設計根拠とロジック
+                    Business Architecture Logic
                 </h4>
                 <div class="space-y-4 font-mono opacity-90">
                     <div>
-                        <span class="text-white font-bold block mb-1">⛽ 燃料損失：</span>
-                        設定単価 <span id="logic-price" class="text-red-400 text-sm">160</span>円/L 基準。<br>
+                        <span class="text-white font-bold block mb-1">⛽ 燃料損失（市場平均 vs 保守設計）：</span>
+                        設定単価 <span id="logic-price" class="text-red-400 text-sm">160</span>円/L。<br>
                         式: ((走行距離/3.5) - (走行距離/(3.5+改善余地))) × 単価 × 台数
                     </div>
                     <div>
-                        <span class="text-white font-bold block mb-1">⏳ 待機損失：</span>
-                        時間単価2,500円（人件費＋車両減価償却費）, 稼働260日/年
+                        <span class="text-white font-bold block mb-1">⏳ 待機時間損失：</span>
+                        2,500円/h（人件費＋車両固定費）× 年間260日稼働
                     </div>
                     <div>
-                        <span class="text-white font-bold block mb-1">⚠️ 品質/人財損失：</span>
-                        事故1件：300,000円（実損＋管理工数）<br>
-                        離職1名：1,200,000円（採用費＋教育費＋機会損失）
+                        <span class="text-white font-bold block mb-1">⚠️ 構造的品質/人財損失：</span>
+                        事故：300,000円（実損＋管理対応工数）<br>
+                        離職：1,200,000円（採用/教育費＋欠員機会損失）
                     </div>
                 </div>
             </div>
         </div>
 
-        <footer class="mt-16 text-center text-slate-400 text-[10px] space-y-1">
-            <p>&copy; 2026 Art mix Inc. | Designed by Junya Komori</p>
-            <p>「未来を動かすハンドルと、どこへでも行ける地図を。」</p>
-        </footer>
+        <section class="mt-12 bg-blue-600 p-8 rounded-[2.5rem] text-center text-white shadow-2xl shadow-blue-200">
+            <h3 class="text-xl font-bold mb-4">利益を再構築（アーキテクト）する。</h3>
+            <p class="text-sm text-blue-100 mb-8 leading-relaxed">
+                Chief Business Strategist 小森 隼也による<br>
+                伴走型サブスクリプション。残り2社限定。
+            </p>
+            <a href="https://artmix.jp" class="block bg-white text-blue-600 font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:scale-95">
+                小森 隼也に相談する
+            </a>
+        </section>
+
     </main>
+
+    <footer class="mt-16 text-center text-slate-400 text-[10px] space-y-2 pb-10">
+        <p class="font-bold text-slate-500">Chief Business Strategist / Business Architect: Junya Komori</p>
+        <p>&copy; 2026 artmix Inc. | 「未来を動かすハンドルと、どこへでも行ける地図を。」</p>
+    </footer>
 
     <script>
         const inputIds = ['price', 'vehicles', 'mileage', 'wait', 'fuel', 'accidents', 'turnover'];
@@ -157,7 +170,6 @@
             const rLoss = turn * 1200000;
             const total = wLoss + fLoss + qLoss + rLoss;
 
-            // UI更新
             inputIds.forEach(id => {
                 let v = elements[id].value;
                 if (id === 'mileage') elements[`val-${id}`].innerText = parseFloat(v).toLocaleString();
@@ -172,7 +184,7 @@
             const area = document.getElementById('capture-area');
             html2canvas(area, { scale: 2, backgroundColor: "#f1f5f9" }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = '利益再設計診断結果.png';
+                link.download = 'artmix_利益再設計診断.png';
                 link.href = canvas.toDataURL();
                 link.click();
             });
@@ -181,13 +193,11 @@
         function shareOnLine() {
             const total = document.getElementById('total-loss').innerText;
             const price = elements.price.value;
-            const text = `【利益再設計診断】軽油単価${price}円設定での年間想定損失額：¥${total}。この損失を「設計」で利益に変えませんか？ 詳細は小森まで。`;
+            const text = `【artmix 利益再設計診断】軽油単価${price}円設定での年間想定損失額：¥${total}。この「経営構造」を再構築しませんか？ 詳細は Chief Business Strategist 小森まで。`;
             window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
         }
 
         inputIds.forEach(id => elements[id].addEventListener('input', calculate));
-        
-        // 初回計算
         calculate();
     </script>
 </body>
