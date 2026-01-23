@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>運輸業利益再設計シミュレーター | artmix</title>
+    <title>運輸業利益再設計シミュレーター | Art mix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -135,7 +135,7 @@
                 Chief Business Strategist 小森 隼也による<br>
                 伴走型サブスクリプション。残り2社限定。
             </p>
-            <a href="https://artmix.jp" class="block bg-white text-blue-600 font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:scale-95">
+            <a href="https://cb400sfkonmori-maker.github.io/artmix-web/" class="block bg-white text-blue-600 font-bold py-4 px-8 rounded-2xl transition-all shadow-lg active:scale-95">
                 小森 隼也に相談する
             </a>
         </section>
@@ -144,7 +144,7 @@
 
     <footer class="mt-16 text-center text-slate-400 text-[10px] space-y-2 pb-10">
         <p class="font-bold text-slate-500">Chief Business Strategist / Business Architect: Junya Komori</p>
-        <p>&copy; 2026 artmix Inc. | 「未来を動かすハンドルと、どこへでも行ける地図を。」</p>
+        <p>&copy; 2026 Art mix Inc. | 「未来を動かすハンドルと、どこへでも行ける地図を。」</p>
     </footer>
 
     <script>
@@ -184,7 +184,7 @@
             const area = document.getElementById('capture-area');
             html2canvas(area, { scale: 2, backgroundColor: "#f1f5f9" }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'artmix_利益再設計診断.png';
+                link.download = 'Art mix_利益再設計診断.png';
                 link.href = canvas.toDataURL();
                 link.click();
             });
@@ -193,7 +193,7 @@
         function shareOnLine() {
             const total = document.getElementById('total-loss').innerText;
             const price = elements.price.value;
-            const text = `【artmix 利益再設計診断】軽油単価${price}円設定での年間想定損失額：¥${total}。この「経営構造」を再構築しませんか？ 詳細は Chief Business Strategist 小森まで。`;
+            const text = `【Art mix 利益再設計診断】軽油単価${price}円設定での年間想定損失額：¥${total}。この「経営構造」を再構築しませんか？ 詳細は Chief Business Strategist 小森まで。https://cb400sfkonmori-maker.github.io/artmix-web/`;
             window.location.href = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
         }
 
